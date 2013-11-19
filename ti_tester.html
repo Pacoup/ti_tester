@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Ti Tester</title>
+<!--
+Ti Tester 1.2.0.0
+https://github.com/Pacoup/ti_tester
+
+   Copyright 2013 Etienne Levesque Guitard
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+		<style>
+			html
+			{
+				background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAdCAYAAADVV140AAABtElEQVR42sWYWQ6EIBBEOY37ev/DOSkTEpKSPBmJfhBHpZtHNw3lhKZpjmVZjn3fb7V1XY+u6w7ZjeN4tG17tmma0n6nzwvf6hdtZK8+8ie/OHbq+zb4tm3noOrf970Gyj93cD3Xez1Tf9nlnheBU8c0spgJ9ZnnWb911T1FNs0E8DC4Zh9hdLVoAIDscMI8Xjl4ugT8PQMI2AG4pUsHwSF6kMLSxktS7Rm4Zq+IxSgMw3AngqUZkl/5T8d7DB7vVWgxGvr9BJZ8VgG36MT9V+/+jH6aRfkzP/XA3TgWYGYA3Hlkn479ArjvPA6Rn6ztGG+Cc9p5eX0EzoUmQCjoL8B5L5YtnAG1wD21Jce92/vSKTn2U3sAd0Fl9yWRBwFHQsvur8DzAseLSwqvJrj85Yr7kiuC67j1AmLpKiePwGXvkpcLX7zB1lJhSqMNgzt0fgly7QQZZWZKszcwA+f3kOV85sMDfVED/F/dA+BwtNcAZynA4CViqiI4f3cyOOuL+uCsewCcxf0r4Mzg4PCJ9gI4f9IZOKyvt8H5f52gNEBFfwDOO1sA/UFOXDkyuPpDsFjX/AAaVQm/PXemlQAAAABJRU5ErkJggg==);
+			}
+			body
+			{
+				font-family:sans-serif;
+				padding-left:1em;
+				padding-right:1em;
+				width:8000px;
+				color:white;
+			}
+			.box
+			{
+				float:left;
+				margin-right:1.5em;
+			}
+			h1
+			{
+				margin-bottom:0.4em;
+			}
+			h2
+			{
+				margin-top:0.5em;
+				border-bottom:1px solid white;
+			}
+			iframe
+			{
+				background-color:white;
+			}
+			.box h3
+			{
+				margin-top:0px;
+				margin-bottom:0.5em;
+			}
+			p
+			{
+				background-color: gray;
+				color: white;
+				font-weight: bold;
+				padding: 0.5em;
+				font-size: 1em;
+				margin-bottom: 0.2em;
+			}
+			small
+			{
+				font-size:0.7em;
+			}
+			iframe
+			{
+				border: 1px solid black;
+			}
+			a
+			{
+				color:white;
+			}
+			.scrollbar_div
+			{
+				height: 100px;
+				overflow: scroll;
+				position: absolute;
+				top: -9999px;
+				width: 100px;
+			}
+			#url_input
+			{
+				width: 500px;
+			}
+		</style>
+		<script>
+			"use strict";
+			
+			var ti = ti || {};
+			
+			ti.adjust_width = function()
+			{
+				var scrollbar_div = document.createElement("div");
+				scrollbar_div.className = "scrollbar_div";
+				document.body.appendChild(scrollbar_div);
+				var scrollbar_width = scrollbar_div.offsetWidth - scrollbar_div.clientWidth;
+				document.body.removeChild(scrollbar_div);
+				
+				document.getElementById("iPhone_4").width = 320 + scrollbar_width;
+				document.getElementById("Galaxy_S_II").width = 320 + scrollbar_width;
+				document.getElementById("iPhone_5").width = 320 + scrollbar_width;
+				document.getElementById("BlackBerry_Q10").width = 360 + scrollbar_width;
+				document.getElementById("Galaxy_S_III").width = 360 + scrollbar_width;
+				document.getElementById("Nexus_4").width = 384 + scrollbar_width;
+				document.getElementById("Nexus_7").width = 604 + scrollbar_width;
+				document.getElementById("iPad").width = 768 + scrollbar_width;
+				document.getElementById("iPhone_4_landscape").width = 480 + scrollbar_width;
+				document.getElementById("Galaxy_S_II_landscape").width = 533 + scrollbar_width;
+				document.getElementById("iPhone_5_landscape").width = 568 + scrollbar_width;
+				document.getElementById("BlackBerry_Z10_landscape").width = 582 + scrollbar_width;
+				document.getElementById("Galaxy_S_III_landscape").width = 640 + scrollbar_width;
+				document.getElementById("Nexus_4_landscape").width = 640 + scrollbar_width;
+				document.getElementById("Legacy_Desktop").width = 800 + scrollbar_width;
+				document.getElementById("Nexus_7_landscape").width = 966 + scrollbar_width;
+				document.getElementById("Small_Desktop").width = 1024 + scrollbar_width;
+				document.getElementById("Modern_Desktop").width = 1280 + scrollbar_width;
+			}
+			
+			ti.load_page = function()
+			{
+				var url_src = ti.url_input.value;
+				
+				if (url_src.substring(0,7) !== 'http://' &&
+				    url_src.substring(0,8) !== 'https://' &&
+				    url_src.substring(0,7) !== 'file://')
+				{
+					url_src = 'http://' + url_src;
+				}
+				
+				
+				for (var i = ti.iframes.length - 1; i >= 0; i--)
+				{
+					ti.iframes[i].src = url_src;
+				}
+			}
+			
+			window.onload = function()
+			{
+				ti.url_input = document.getElementById('url_input');
+				ti.iframes = document.getElementsByTagName('iframe');
+				ti.adjust_width();
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Ti Tester</h1>
+		<form action="javascript:ti.load_page()">
+			<input type="text" id="url_input">
+			<input type="submit" value="Load Page">
+		</form>
+		
+		<h2>Portrait</h2>
+		<div class="box">
+			<h3>iPhone 4<br>
+			<small title="Device Resolution">(640 x 960)</small></h3>
+			<p title="Relative Width">320px</p>
+			<iframe id="iPhone_4" height="480" src=""></iframe>
+		</div>
+		<div class="box">
+			<h3>Galaxy S II<br>
+			<small title="Device Resolution">(480 x 800)</small></h3>
+			<p title="Relative Width">320px</p>
+			<iframe id="Galaxy_S_II" height="533" src=""></iframe>
+		</div>
+		<div class="box">
+			<h3>iPhone 5<br>
+			<small title="Device Resolution">(640 x 1136)</small></h3>
+			<p title="Relative Width">320px</p>
+			<iframe id="iPhone_5" height="568" src=""></iframe>
+		</div>
+		<div class="box">
+			<h3>Q10<br>
+			<small title="Device Resolution">(720 x 720)</small></h3>
+			<p title="Relative Width">360px</p>
+			<iframe id="BlackBerry_Q10" height="360" src=""></iframe>
+		</div>
+		<div class="box">
+			<h3>Galaxy S III<br>
+			<small title="Device Resolution">(720 x 1280)</small></h3>
+			<p title="Relative Width">360px</p>
+			<iframe id="Galaxy_S_III" height="640" src=""></iframe>
+		</div>
+		<div class="box">
+			<h3>Nexus 4, Z10<br>
+			<small title="Device Resolution">(768 x 1280)</small></h3>
+			<p title="Relative Width">384px</p>
+			<iframe id="Nexus_4" height="640" src=""></iframe>
+		</div>
+		<div class="box">
+			<h3>Nexus 7<br>
+			<small title="Device Resolution">(800 x 1280)</small></h3>
+			<p title="Relative Width">604px</p>
+			<iframe id="Nexus_7" height="966" src=""></iframe>
+		</div>
+		<div class="box">
+			<h3>iPad<br>
+			<small title="Device Resolution">(1536 x 2048)</small></h3>
+			<p title="Relative Width">768px</p>
+			<iframe id="iPad" height="1024" src=""></iframe>
+		</div>
+		<div style="clear:both"></div>
+		<h2>Landscape</h2>
+		<div class="box">
+			<h3>iPhone 4<br>
+			<small title="Device Resolution">(960 x 640)</small></h3>
+			<p title="Relative Width">480px</p>
+			<iframe id="iPhone_4_landscape" height="320" src=""></iframe>
+		</div>
+		<div class="box">
+			<h3>Galaxy S II<br>
+			<small title="Device Resolution">(800 x 480)</small></h3>
+			<p title="Relative Width">533px</p>
+			<iframe id="Galaxy_S_II_landscape" height="320" src=""></iframe>
+		</div>
+		<div class="box">
+			<h3>iPhone 5<br>
+			<small title="Device Resolution">(1136 x 640)</small></h3>
+			<p title="Relative Width">568px</p>
+			<iframe id="iPhone_5_landscape" height="320" src=""></iframe>
+		</div>
+		<div class="box">
+			<h3>BlackBerry Z10<br>
+			<small title="Device Resolution">(1280 x 768)</small></h3>
+			<p title="Relative Width">582px</p>
+			<iframe id="BlackBerry_Z10_landscape" height="349" src=""></iframe>
+		</div>
+		<div class="box">
+			<h3>Galaxy S III<br>
+			<small title="Device Resolution">(1280 x 720)</small></h3>
+			<p title="Relative Width">640px</p>
+			<iframe id="Galaxy_S_III_landscape" height="360" src=""></iframe>
+		</div>
+		<div class="box">
+			<h3>Nexus 4<br>
+			<small title="Device Resolution">(1280 x 768)</small></h3>
+			<p title="Relative Width">640px</p>
+			<iframe id="Nexus_4_landscape" height="384" src=""></iframe>
+		</div>
+		<div class="box">
+			<h3>Legacy Desktop<br>
+			<small title="Device Resolution">(800 x 600)</small></h3>
+			<p title="Relative Width">800px</p>
+			<iframe id="Legacy_Desktop" height="600" src=""></iframe>
+		</div>
+		<div class="box">
+			<h3>Nexus 7 Landscape<br>
+			<small title="Device Resolution">(1280 x 800)</small></h3>
+			<p title="Relative Width">966px</p>
+			<iframe id="Nexus_7_landscape" height="604" src=""></iframe>
+		</div>
+		<div class="box">
+			<h3>Small Desktop / iPad Landscape<br>
+			<small title="Device Resolution">(1024 x 768)</small></h3>
+			<p title="Relative Width">1024px</p>
+			<iframe id="Small_Desktop" height="768" src=""></iframe>
+		</div>
+		<div class="box">
+			<h3>Modern Desktop<br>
+			<small title="Device Resolution">(1280+ x 768+)</small></h3>
+			<p title="Relative Width">1280+px</p>
+			<iframe id="Modern_Desktop" height="768" src=""></iframe>
+		</div>
+		<div style="clear:both"></div>
+		<p style="margin-bottom:2em; font-size:0.9em; font-weight:normal">Ti Tester 1.2.0.0<br>
+		<a href="https://github.com/Pacoup/ti_tester">https://github.com/Pacoup/ti_tester</a><br>
+		&copy; 2013 Etienne Levesque Guitard</p>
+	</body>
+</html>
